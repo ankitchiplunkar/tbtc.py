@@ -11,5 +11,5 @@ def point_to_pubkey(x, y, compressed):
         return b'\x04' + x.rjust(32, b'\x00') + y.rjust(32, b'\x00')
 
 
-def get_point_to_p2wpkh_address(x, y):
+def point_to_p2wpkh_address(x, y):
     return make_p2wpkh_address(point_to_pubkey(x, y, True))

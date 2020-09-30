@@ -6,6 +6,7 @@ from tbtc.settings import (
     LOG_FORMAT,
     LOG_LEVEL,
 )
+from tbtc.constants import contracts
 
 
 logger = logging.getLogger(__name__)
@@ -29,3 +30,7 @@ def setup_logging():
 
 def init_web3(node_url):
     return Web3(Web3.HTTPProvider(node_url))
+
+
+def get_contracts(version, network):
+    return contracts[version][network]
