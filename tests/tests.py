@@ -5,6 +5,7 @@ from web3.datastructures import (
 from hexbytes import HexBytes
 from tbtc.constants import contracts
 from tbtc.session import setup_logging, init_web3, get_contracts
+from tbtc.tbtc_system import TBTC
 from tbtc.utils import initialize_contract
 from tbtc.bitcoin_helpers import point_to_p2wpkh_address
 
@@ -49,3 +50,10 @@ def test_point_to_address():
     assert address == point_to_p2wpkh_address(logs[0]['args']['_signingGroupPubkeyX'], logs[0]['args']['_signingGroupPubkeyY'])
 
 
+def test_lot_sizes():
+    node_url = os.getenv("WEB3_URL")
+    w3 = init_web3(node_url)
+    version = "1.1.0"
+
+    t = TBTC(version, w3)
+    assert len(t.get_available_lot_sizes()) > 0
