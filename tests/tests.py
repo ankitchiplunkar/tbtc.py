@@ -11,10 +11,11 @@ from tbtc.bitcoin_helpers import point_to_p2wpkh_address
 
 txhash = "0xb538eabb6cea1fc3af58f1474c2b8f1adbf36a209ec8dc5534618b1f2d860c8e"
 
-node_url = os.getenv("WEB3_URL")
+node_url = os.getenv("ROPSTEN_URL")
+private_key = os.getenv("TBTC_PRIVATE_KEY")
 w3 = init_web3(node_url)
 version = "1.1.0"
-network = "mainnet"
+network = "ropsten"
 address = 'bc1qzse3hm25w3nx70e8nlss6nlfusj7wd4q3m8gax'
 
 def test_point_to_address():
@@ -51,9 +52,5 @@ def test_point_to_address():
 
 
 def test_lot_sizes():
-    node_url = os.getenv("WEB3_URL")
-    w3 = init_web3(node_url)
-    version = "1.1.0"
-
-    t = TBTC(version, w3)
+    t = TBTC(version, w3, private_key)
     assert len(t.get_available_lot_sizes()) > 0

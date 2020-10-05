@@ -34,3 +34,7 @@ def init_web3(node_url):
 
 def get_contracts(version, network):
     return contracts[version][network]
+
+
+def init_account(w3, private_key):
+    return w3.eth.account.from_key(private_key)
