@@ -5,12 +5,13 @@ from tbtc.session import (
 )
 from tbtc.utils import initialize_contract
 from tbtc.deposit import Deposit
+import riemann
 
 logger = logging.getLogger(__name__)
 
 class TBTC():
 
-    def __init__(self, version, web3, private_key):
+    def __init__(self, version, web3, btc_network, private_key):
         self.version = version
         self.w3 = web3
         if self.w3.eth.chainId == 1:
@@ -19,6 +20,9 @@ class TBTC():
             self.eth_network = "ropsten"
         else:
             raise KeyError(f"Ethereum network {self.w3.eth.chainId} not defined")
+        self.btc_network = btc_network
+        if self.btc_network == 'testnet':
+            riemann.select_network('bitcoin_test')
         self.account = init_account(self.w3, private_key)
         self.contracts = get_contracts(self.version, self.eth_network)
         self.system = initialize_contract(self.w3, self.contracts["TBTCSystem"], "TBTCSystem")

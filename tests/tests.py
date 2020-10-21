@@ -53,17 +53,17 @@ def test_point_to_address():
 
 
 def test_lot_sizes():
-    t = TBTC(version, w3, private_key)
+    t = TBTC(version, w3, 'testnet', private_key)
     assert len(t.get_available_lot_sizes()) > 0
 
 def test_get_signer_pub_key():
     tx = '0xb3e5a3437bcea5d27927c3428db3f0144d6c58baa80b976ffb854bf696ae973c'
     receipt = w3.eth.getTransactionReceipt(tx)
-    t = TBTC(version, w3, private_key)
+    t = TBTC(version, w3, 'testnet', private_key)
     logs = t.system.events.Created().processReceipt(receipt)
     d = Deposit(
         t, 
         logs[0]['args']['_depositContractAddress'],
         logs[0]['args']['_keepAddress']
     )
-    assert 'bc1qdcs4kyandpceejvntdy24hvwl2ecgk2wjq2apg' == d.get_signer_public_key()
+    assert 'tb1qdcs4kyandpceejvntdy24hvwl2ecgk2wcx3w6m' == d.get_signer_public_key()
