@@ -10,3 +10,6 @@ git push origin --tags
 # upload the library to pypi
 python setup.py sdist
 twine upload dist/*
+
+# remove dist
+rm -rf dist/*
