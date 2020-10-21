@@ -13,7 +13,7 @@ deposit_address = "0xe336980ab9edd52FF50626F120f63889aD5F6b7B"
 tx = '0xb3e5a3437bcea5d27927c3428db3f0144d6c58baa80b976ffb854bf696ae973c'
 receipt = w3.eth.getTransactionReceipt(tx)
 
-t = TBTC(version, w3, private_key)
+t = TBTC(version, w3, 'testnet', private_key)
 lot_sizes = t.get_available_lot_sizes()
 logs = t.system.events.Created().processReceipt(receipt)
 # logs = t.create_deposit(lot_sizes[0])

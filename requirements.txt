@@ -1,4 +1,4 @@
-bitcoin-utils==0.4.9
 web3==5.12.1
 pytest==6.0.2
+pytest-cov==2.8.1
 riemann-tx==2.1.0

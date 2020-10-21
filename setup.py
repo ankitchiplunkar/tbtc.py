@@ -27,6 +27,12 @@ setup(
     python_requires='>=3.6, <4',
     keywords=['ethereum', 'bitcoin'],
     packages=find_packages(exclude=["tests", "tests.*"]),
+    install_requires=[
+        "web3==5.12.1",
+        "riemann-tx==2.1.0",
+        "pytest==6.0.2",
+        "pytest-cov==2.8.1",
+      ],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
