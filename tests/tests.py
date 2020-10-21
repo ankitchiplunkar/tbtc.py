@@ -6,15 +6,17 @@ from hexbytes import HexBytes
 from tbtc.constants import contracts
 from tbtc.session import setup_logging, init_web3, get_contracts
 from tbtc.tbtc_system import TBTC
+from tbtc.deposit import Deposit
 from tbtc.utils import initialize_contract
 from tbtc.bitcoin_helpers import point_to_p2wpkh_address
 
 txhash = "0xb538eabb6cea1fc3af58f1474c2b8f1adbf36a209ec8dc5534618b1f2d860c8e"
 
-node_url = os.getenv("WEB3_URL")
+node_url = os.getenv("ROPSTEN_URL")
+private_key = os.getenv("TBTC_PRIVATE_KEY")
 w3 = init_web3(node_url)
 version = "1.1.0"
-network = "mainnet"
+network = "ropsten"
 address = 'bc1qzse3hm25w3nx70e8nlss6nlfusj7wd4q3m8gax'
 
 def test_point_to_address():
@@ -51,9 +53,17 @@ def test_point_to_address():
 
 
 def test_lot_sizes():
-    node_url = os.getenv("WEB3_URL")
-    w3 = init_web3(node_url)
-    version = "1.1.0"
-
-    t = TBTC(version, w3)
+    t = TBTC(version, w3, private_key)
     assert len(t.get_available_lot_sizes()) > 0
+
+def test_get_signer_pub_key():
+    tx = '0xb3e5a3437bcea5d27927c3428db3f0144d6c58baa80b976ffb854bf696ae973c'
+    receipt = w3.eth.getTransactionReceipt(tx)
+    t = TBTC(version, w3, private_key)
+    logs = t.system.events.Created().processReceipt(receipt)
+    d = Deposit(
+        t, 
+        logs[0]['args']['_depositContractAddress'],
+        logs[0]['args']['_keepAddress']
+    )
+    assert 'bc1qdcs4kyandpceejvntdy24hvwl2ecgk2wjq2apg' == d.get_signer_public_key()
