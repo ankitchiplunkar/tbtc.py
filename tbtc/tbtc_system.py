@@ -4,6 +4,7 @@ from tbtc.session import (
     get_contracts,
 )
 from tbtc.utils import initialize_contract
+from tbtc.deposit import Deposit
 
 logger = logging.getLogger(__name__)
 
@@ -13,16 +14,16 @@ class TBTC():
         self.version = version
         self.w3 = web3
         if self.w3.eth.chainId == 1:
-            self.network = "mainnet"
+            self.eth_network = "mainnet"
         elif self.w3.eth.chainId == 3:
-            self.network = "ropsten"
+            self.eth_network = "ropsten"
         else:
-            raise KeyError(f"Network {self.w3.eth.chainId} not defined")
+            raise KeyError(f"Ethereum network {self.w3.eth.chainId} not defined")
         self.account = init_account(self.w3, private_key)
-        self.contracts = get_contracts(self.version, self.network)
+        self.contracts = get_contracts(self.version, self.eth_network)
         self.system = initialize_contract(self.w3, self.contracts["TBTCSystem"], "TBTCSystem")
         self.deposit_factory = initialize_contract(self.w3, self.contracts["DepositFactory"], "DepositFactory")
-        logger.info(f"Initialized tBTC with version {self.version} and network {self.network}")
+        logger.info(f"Initialized tBTC with version {self.version} and eth network {self.eth_network}")
     
 
     def get_available_lot_sizes(self):
@@ -35,7 +36,12 @@ class TBTC():
         create_deposit_call = self.deposit_factory.functions.createDeposit(lot_size)
         receipt = self._manage_transaction(create_deposit_call, gas_limit=1600000, value=value)
         logs = self.system.events.Created().processReceipt(receipt)
-        return logs[0]['args']['_depositContractAddress']
+        deposit = Deposit(
+            self, 
+            logs[0]['args']['_depositContractAddress'],
+            logs[0]['args']['_keepAddress']
+            )
+        return deposit
 
 
     def _manage_transaction(self, function_call, gas_limit, value=0):
@@ -53,3 +59,11 @@ class TBTC():
         logger.info("Waiting for transaction to be mined ...")
         return self.w3.eth.waitForTransactionReceipt(tx_hash)
 
+
+    def _get_existing_public_key_event(self, deposit_address):
+        event_filter = self.system.events.RegisteredPubkey.createFilter(
+            fromBlock='earliest',
+            toBlock='latest',
+            argument_filters={'_depositContractAddress': deposit_address}
+        )
+        return event_filter.get_all_entries()
