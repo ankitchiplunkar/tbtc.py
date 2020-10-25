@@ -2,7 +2,7 @@
 
 A python client to interact with the [tbtc](https://tbtc.network/) protocol.
 
-Erasure Protocol version: `1.1.0`
+tBTC Protocol version: `1.1.0`
 
 
 ## Setup:
