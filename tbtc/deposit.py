@@ -13,12 +13,14 @@ class Deposit():
         self.deposit_contract = initialize_contract(tbtc_system.w3, deposit_contract, "Deposit")
         self.keep_contract = initialize_contract(tbtc_system.w3, keep_address, "BondedECDSAKeep")
         
-    
+    def __repr__(self):
+        return f"Deposit contract at: {self.deposit_contract}"
+
     def get_signer_public_key(self):
         # finding qn existing public key event
         event = self.tbtc_system._get_existing_public_key_event(self.deposit_address)
         # no registered public key found
-        if event is None:
+        if event == []:
             # check if key is ready
             transaction_filter = self.keep_contract.events.PublicKeyPublished.createFilter(
                 fromBlock='earliest',
@@ -29,7 +31,7 @@ class Deposit():
                 logger.info("Retry again later key has not been published yet")
                 return None
             else:
-                call = self.contract.functions.retrieveSignerPubkey()
+                call = self.deposit_contract.functions.retrieveSignerPubkey()
                 receipt = self.tbtc_system._manage_transaction(
                     call, 
                     gas_limit=160000
