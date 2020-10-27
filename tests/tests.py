@@ -67,3 +67,11 @@ def test_get_signer_pub_key():
         logs[0]['args']['_keepAddress']
     )
     assert 'tb1qdcs4kyandpceejvntdy24hvwl2ecgk2wcx3w6m' == d.get_signer_public_key()
+
+def test_lot_size():
+    deposit_address = "0xd7Edcd864c79C54AEFD82636103BA263C361d49D"
+    keep_address = '0x51a46759C9adf1a163764Fd387ef3f6738584686'
+    t = TBTC(version, w3, 'testnet', private_key)
+    deposit = Deposit(t, deposit_address, keep_address)
+    assert "tb1q38yzl97hg0vnn4wf7srguwjnmlgfa30uq3nrwt" == deposit.get_signer_public_key()
+    assert 1000000 == deposit.get_lot_size()

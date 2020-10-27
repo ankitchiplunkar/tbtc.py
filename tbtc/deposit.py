@@ -41,3 +41,6 @@ class Deposit():
             event[0]['args']['_signingGroupPubkeyX'], 
             event[0]['args']['_signingGroupPubkeyY']
             )
+
+    def get_lot_size(self):
+        return self.deposit_contract.functions.lotSizeSatoshis().call()
