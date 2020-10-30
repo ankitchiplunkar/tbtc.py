@@ -9,6 +9,7 @@ from tbtc.tbtc_system import TBTC
 from tbtc.deposit import Deposit
 from tbtc.utils import initialize_contract
 from tbtc.bitcoin_helpers import point_to_p2wpkh_address
+from tbtc.electrum import Electrum
 
 txhash = "0xb538eabb6cea1fc3af58f1474c2b8f1adbf36a209ec8dc5534618b1f2d860c8e"
 
@@ -67,3 +68,21 @@ def test_get_signer_pub_key():
         logs[0]['args']['_keepAddress']
     )
     assert 'tb1qdcs4kyandpceejvntdy24hvwl2ecgk2wcx3w6m' == d.get_signer_public_key()
+
+def test_lot_size():
+    deposit_address = "0xd7Edcd864c79C54AEFD82636103BA263C361d49D"
+    keep_address = '0x51a46759C9adf1a163764Fd387ef3f6738584686'
+    t = TBTC(version, w3, 'testnet', private_key)
+    deposit = Deposit(t, deposit_address, keep_address)
+    assert "tb1q38yzl97hg0vnn4wf7srguwjnmlgfa30uq3nrwt" == deposit.get_signer_public_key()
+    assert 1000000 == deposit.get_lot_size()
+
+def test_electrum():
+    e = Electrum(
+        host="electrum.blockstream.info",
+        port=60002,
+        protocol="ssl",
+        timeout=5
+        )
+    data = e.send("blockchain.transaction.get", ["6cc808a28150482f783fdff7c99a6245a59437f55bb85575aa31c99ab2b0898b"])
+    assert data['result'] == "02000000014f0eed7ea9a36fd2b2b543aac4fdf6829a05b6a4bd53418dff5af54c0024133c000000006a473044022052d0875f4412e26e2db1470126f5ccc537e8998bcb5b203e6346ca9b1bf847d2022039182a20dd4c2a30b4155d4b72426aaa6c6cf97c02928c7c06fd4cff8925104301210299b7faf388c5d8e6ba1654476083098e896bd2ec384aba20484b8a82d01496b6fdffffff0240420f000000000016001489c82f97d743d939d5c9f4068e3a53dfd09ec5fc947edc0b000000001976a9144c8bda34fa519008db22b421711ee6b9fb52b55988ac13761c00"
