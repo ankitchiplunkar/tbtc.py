@@ -10,15 +10,17 @@ from tbtc.deposit import Deposit
 from tbtc.utils import initialize_contract
 from tbtc.bitcoin_helpers import point_to_p2wpkh_address
 from tbtc.electrum import Electrum
-
-txhash = "0xb538eabb6cea1fc3af58f1474c2b8f1adbf36a209ec8dc5534618b1f2d860c8e"
+from tests.constants import (
+    txhash,
+    version,
+    network,
+    address,
+    transaction_data,
+)
 
 node_url = os.getenv("ROPSTEN_URL")
 private_key = os.getenv("TBTC_PRIVATE_KEY")
 w3 = init_web3(node_url)
-version = "1.1.0"
-network = "ropsten"
-address = 'bc1qzse3hm25w3nx70e8nlss6nlfusj7wd4q3m8gax'
 
 def test_point_to_address():
     receipt = AttributeDict({
@@ -79,10 +81,26 @@ def test_lot_size():
 
 def test_electrum():
     e = Electrum(
-        host="electrum.blockstream.info",
-        port=60002,
+        host="testnet.qtornado.com",
+        port=51002,
         protocol="ssl",
         timeout=5
         )
     data = e.send("blockchain.transaction.get", ["6cc808a28150482f783fdff7c99a6245a59437f55bb85575aa31c99ab2b0898b"])
-    assert data['result'] == "02000000014f0eed7ea9a36fd2b2b543aac4fdf6829a05b6a4bd53418dff5af54c0024133c000000006a473044022052d0875f4412e26e2db1470126f5ccc537e8998bcb5b203e6346ca9b1bf847d2022039182a20dd4c2a30b4155d4b72426aaa6c6cf97c02928c7c06fd4cff8925104301210299b7faf388c5d8e6ba1654476083098e896bd2ec384aba20484b8a82d01496b6fdffffff0240420f000000000016001489c82f97d743d939d5c9f4068e3a53dfd09ec5fc947edc0b000000001976a9144c8bda34fa519008db22b421711ee6b9fb52b55988ac13761c00"
+    assert data['result'] == transaction_data["hex"]
+
+
+def test_verbose_electrum():
+    e = Electrum(
+        host="testnet.qtornado.com",
+        port=51002,
+        protocol="ssl",
+        timeout=5
+        )
+    data = e.send(
+        "blockchain.transaction.get", [
+            "6cc808a28150482f783fdff7c99a6245a59437f55bb85575aa31c99ab2b0898b", 
+            True
+        ])
+    data["result"] = transaction_data
+    
