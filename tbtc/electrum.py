@@ -21,7 +21,12 @@ class Electrum():
         self.connection.connect((self.host, self.port))
 
     def _receive(self):
-        buffer = self.connection.recv(1024)
+        buffer = b""
+        is_message_completed = False
+        while not is_message_completed:
+            buffer += self.connection.recv(1024)
+            if buffer.decode("utf-8").endswith("\n"):
+                is_message_completed = True
         r = json.loads(buffer)
         return r
 
