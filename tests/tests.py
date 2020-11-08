@@ -86,8 +86,8 @@ def test_electrum():
         protocol="ssl",
         timeout=5
         )
-    data = e.send("blockchain.transaction.get", ["6cc808a28150482f783fdff7c99a6245a59437f55bb85575aa31c99ab2b0898b"])
-    assert data['result'] == transaction_data["hex"]
+    data = e.get_transaction("6cc808a28150482f783fdff7c99a6245a59437f55bb85575aa31c99ab2b0898b")
+    assert data["result"] == transaction_data["hex"]
 
 
 def test_verbose_electrum():
@@ -97,10 +97,9 @@ def test_verbose_electrum():
         protocol="ssl",
         timeout=5
         )
-    data = e.send(
-        "blockchain.transaction.get", [
+    data = e.get_transaction(
             "6cc808a28150482f783fdff7c99a6245a59437f55bb85575aa31c99ab2b0898b", 
             True
-        ])
+        )
     data["result"] = transaction_data
     

@@ -42,3 +42,25 @@ class Electrum():
         payload = payload.encode()
         self.connection.send(payload)
         return self._receive()
+    
+    def get_latest_block(self):
+        method = "blockchain.headers.subscribe"
+        params = []
+        return self.send(method, params)
+
+    def get_transaction(self, tx_hash, verbose=False):
+        method = "blockchain.transaction.get"
+        params = [tx_hash]
+        if verbose:
+            params = params.append(verbose)
+        return self.send(method, params)
+    
+    def get_block_headers(self, block_height, confirmations):
+        method = "blockchain.block.headers"
+        params = [block_height, confirmations]
+        return self.send(method, params)
+
+    def get_transaction_merkle(self, tx_hash, block_height):
+        method = "blockchain.transaction.getMerkle"
+        params = [tx_hash, block_height]
+        return self.send(method, params)
